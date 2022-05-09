@@ -3,6 +3,7 @@ from enum import unique
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 import pandas as pd
+from  math import log
 arquivo_config = open('INDEX.CFG', 'r')
 config = []
 
@@ -25,9 +26,10 @@ for row in tabela_palavras.iterrows():
     last_doc = int(list_docs[-1])
     num_docs = max(num_docs,last_doc)
 
-tabela_docs = pd.DataFrame(0, index=tabela_palavras.index ,columns=range(1,num_docs+1))
+tabela_docs = pd.DataFrame(0.0, index=tabela_palavras.index ,columns=range(1,num_docs+1))
 
 tabela_busca = tabela_palavras.join(tabela_docs)
+tabela_busca
 
 palavras_indesejadas = []
 
@@ -44,13 +46,15 @@ for i in tabela_busca.index:
     for d in list_docs:
         if not (d in list_docs_unique):
             list_docs_unique.append(d) 
-    
+
+    num_docs_termo = len(list_docs_unique)
     
     for doc in list_docs_unique:
-        n_docs = list_docs.count(doc)
-        tabela_busca.iat[int(i),int(doc)+1] = n_docs
-    
-tabela_busca.drop(palavras_indesejadas,axis=0)
+        freq_doc = list_docs.count(doc)
+        # formula tf/idf
+        tabela_busca.iat[int(i),int(doc)+1] = 1 + log(freq_doc) * log(num_docs/num_docs_termo)
+        
+tabela_busca = tabela_busca.drop(palavras_indesejadas,axis=0)
 tabela_busca = tabela_busca.drop(['ListDocs'],axis=1)
     
     
