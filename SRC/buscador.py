@@ -24,21 +24,19 @@ for linha in arquivo_config:
 
 arquivo_config.close()
 
-tabela_consultas = pd.read_csv(config[1], sep=';', encoding="utf_8")
-modelo_vetorial = pd.read_csv(config[0], sep=';', encoding="utf_8")
+tabela_consultas = pd.read_csv("../RESULT/" + config[1], sep=';', encoding="utf_8")
+modelo_vetorial = pd.read_csv("../RESULT/" + config[0], sep=';', encoding="utf_8")
 modelo_vetorial = modelo_vetorial.iloc[:50][:50]
 tabela_consultas = tabela_consultas.iloc[:10][:]
 modelo_vetorial.set_index("Words", inplace = True)
 
-arquivo_resultados = open(config[2], 'w')
+arquivo_resultados = open("../RESULT/" + config[2], 'w')
 texto_arquivo = []
 
 num_docs = len(modelo_vetorial.index) - 1
 palavras_consulta = {}
 modulo_consulta = 0
 
-print(modelo_vetorial)
-print(num_docs)
 
 for i in tabela_consultas.index:
     id_consulta = tabela_consultas.iloc[i][0]
@@ -89,7 +87,7 @@ for i in tabela_consultas.index:
         distancia =  doc_x_consulta/(modulo_consulta * modulo_doc)
         distancias_documentos.append([col , distancia]) 
         
-    print(distancias_documentos)
+    print(id_consulta)
     distancias_documentos = sorted( distancias_documentos , key=lambda doc: doc[1])
     lista_resultado = []
     for i in range(len(distancias_documentos)):

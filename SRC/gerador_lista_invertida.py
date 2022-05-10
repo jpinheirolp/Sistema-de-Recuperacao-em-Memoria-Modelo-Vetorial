@@ -29,7 +29,7 @@ print(colecao_docs, arquivo_escrita)
 colecao_palavras = {}
 
 for doc in colecao_docs:
-    arquivo_leitura = open('CysticFibrosis2-20220501/data/' + doc,'r')
+    arquivo_leitura = open('../CysticFibrosis2-20220501/data/' + doc,'r')
 
     conteudo_leitura = arquivo_leitura.read()
     soup = BeautifulSoup(conteudo_leitura,'xml')
@@ -58,7 +58,7 @@ for doc in colecao_docs:
 
 #print(colecao_palavras)
 
-arquivo_escrita = open(arquivo_escrita, 'w')
+arquivo_escrita = open("../RESULT/" + arquivo_escrita, 'w')
 texto_arquivo = []
 
 for chave,valor in colecao_palavras.items():

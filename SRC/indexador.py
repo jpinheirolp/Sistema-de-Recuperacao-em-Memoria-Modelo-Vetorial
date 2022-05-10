@@ -16,7 +16,7 @@ for linha in arquivo_config:
 
 arquivo_config.close()
 
-tabela_palavras = pd.read_csv(config[0], sep=';', encoding="utf_8")
+tabela_palavras = pd.read_csv("../RESULT/" + config[0], sep=';', encoding="utf_8")
 tabela_palavras.columns = ["Words",'ListDocs']
 num_docs = 0
 for row in tabela_palavras.iterrows():
@@ -57,8 +57,6 @@ for i in tabela_busca.index:
 tabela_busca = tabela_busca.drop(palavras_indesejadas,axis=0)
 tabela_busca = tabela_busca.drop(['ListDocs'],axis=1)
     
-    
-print(tabela_busca.iloc[2])
-print(tabela_busca.iat[2,778])
 
-tabela_busca.to_csv(config[1], sep=';', encoding='utf-8')
+
+tabela_busca.to_csv("../RESULT/" + config[1], sep=';', encoding='utf-8')

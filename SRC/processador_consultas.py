@@ -15,7 +15,7 @@ arquivo_config.close()
 
 print(config)
 
-arquivo_leitura = open('CysticFibrosis2-20220501/data/' + config[0],'r')
+arquivo_leitura = open('../CysticFibrosis2-20220501/data/' + config[0],'r')
 
 conteudo_leitura = arquivo_leitura.read()
 soup = BeautifulSoup(conteudo_leitura,'xml')
@@ -23,7 +23,7 @@ numeros_consultas = soup.find_all('QueryNumber')
 textos_consultas = soup.find_all('QueryText')
 documentos_consultas = soup.find_all('Records')
 
-arquivo_escrita1 = open(config[1], 'w')
+arquivo_escrita1 = open("../RESULT/" + config[1], 'w')
 
 texto_arquivo = ["QueryNumber;QueryText\n"]
 
@@ -42,7 +42,7 @@ for i in range(len(numeros_consultas)):
 arquivo_escrita1.writelines(texto_arquivo)
 arquivo_escrita1.close()
 
-arquivo_escrita2 = open(config[2], 'w')
+arquivo_escrita2 = open("../RESULT/" + config[2], 'w')
 
 texto_arquivo = ["QueryNumber;DocNumber;DocVotes\n"]
 
