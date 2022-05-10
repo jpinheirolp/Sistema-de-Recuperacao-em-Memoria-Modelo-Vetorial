@@ -1,0 +1,3 @@
+O modelo é uma matriz onde as linhas são palavras, as colunas são documentos e cada elemento é o tf/idf de uma palavra i com o elemento j.
+Como a matriz é construida com o pandas ela fica com o formato:
+

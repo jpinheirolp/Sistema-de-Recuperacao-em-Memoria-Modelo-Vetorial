@@ -6,6 +6,12 @@ import pandas as pd
 from  math import log
 import re
 
+def corrige_log_0(num):
+    if int(num) == 0:
+        return 0.000001
+    else:
+        return num
+
 arquivo_config = open('BUSCA.CFG', 'r')
 config = []
 
@@ -20,6 +26,8 @@ arquivo_config.close()
 
 tabela_consultas = pd.read_csv(config[1], sep=';', encoding="utf_8")
 modelo_vetorial = pd.read_csv(config[0], sep=';', encoding="utf_8")
+modelo_vetorial = modelo_vetorial.iloc[:50][:50]
+tabela_consultas = tabela_consultas.iloc[:10][:]
 modelo_vetorial.set_index("Words", inplace = True)
 
 arquivo_resultados = open(config[2], 'w')
@@ -56,9 +64,8 @@ for i in tabela_consultas.index:
 
         freq_doc = vetor_consulta.count(termo)
         # formula tf/idf
-        #print("frq",freq_doc)
-        #print("num_docstermo",num_docs_termo)
-        palavras_consulta[termo] = 1 + log(freq_doc) * log(num_docs/num_docs_termo)
+   
+        palavras_consulta[termo] = 1 + log(corrige_log_0(freq_doc)) * log(corrige_log_0( num_docs/num_docs_termo))
         modulo_consulta += palavras_consulta[termo]**2
 
     distancias_documentos = []
@@ -81,7 +88,7 @@ for i in tabela_consultas.index:
             doc_x_consulta += valor*modelo_vetorial.loc[chave][col]
         distancia =  doc_x_consulta/(modulo_consulta * modulo_doc)
         distancias_documentos.append([col , distancia]) 
-        print("col",col)
+        
     print(distancias_documentos)
     distancias_documentos = sorted( distancias_documentos , key=lambda doc: doc[1])
     lista_resultado = []
