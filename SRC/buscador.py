@@ -26,8 +26,8 @@ arquivo_config.close()
 
 tabela_consultas = pd.read_csv("../RESULT/" + config[1], sep=';', encoding="utf_8")
 modelo_vetorial = pd.read_csv("../RESULT/" + config[0], sep=';', encoding="utf_8")
-modelo_vetorial = modelo_vetorial.iloc[:50][:50]
-tabela_consultas = tabela_consultas.iloc[:10][:]
+#modelo_vetorial = modelo_vetorial.iloc[:50][:50]
+tabela_consultas = tabela_consultas.iloc[:6][:]
 modelo_vetorial.set_index("Words", inplace = True)
 
 arquivo_resultados = open("../RESULT/" + config[2], 'w')
