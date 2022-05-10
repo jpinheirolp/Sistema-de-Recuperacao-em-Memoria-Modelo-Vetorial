@@ -16,7 +16,7 @@ for linha in arquivo_config:
 
 arquivo_config.close()
 
-tabela_palavras = pd.read_csv("./robson.csv", sep=';', encoding="utf_8")
+tabela_palavras = pd.read_csv(config[0], sep=';', encoding="utf_8")
 tabela_palavras.columns = ["Words",'ListDocs']
 num_docs = 0
 for row in tabela_palavras.iterrows():
