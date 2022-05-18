@@ -1,12 +1,22 @@
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 import re
+from porter_stemmer import PorterStemmer
+
+ps = PorterStemmer()
+
+print("abandon",ps.stem("abandon", 0,len("abandon")-1))
 
 arquivo_config = open('GLI.CFG', 'r')
 colecao_docs = []
 arquivo_escrita = ""
+flag_stemmer = False
 
 for linha in arquivo_config:
+    if not("=" in linha):
+        if linha.replace("\n","").replace(" ","") == "STEMMER": 
+            flag_stemmer = True
+        continue
     nome_linha , conteudo_linha = linha.split("=")
     print(nome_linha,conteudo_linha)
     
@@ -17,6 +27,9 @@ for linha in arquivo_config:
 
     if nome_linha != "LEIA": 
         arquivo_escrita = conteudo_linha
+        nome_arquivo, tipo_arquivo = arquivo_escrita.split(".")
+        nome_arquivo += "-STEMMER" if flag_stemmer else "-NOSTEMMER"
+        arquivo_escrita = nome_arquivo + "." + tipo_arquivo
         break
 
     colecao_docs.append(conteudo_linha)
@@ -46,10 +59,12 @@ for doc in colecao_docs:
         
         palavras_texto = re.sub("[^a-zA-Z]+", " ", conteudo_texto)
         palavras_texto = re.split("['-();:,.!? \n]", palavras_texto)
-        
+
         #palavras_texto = conteudo_texto.split(" ")
         for palavra in palavras_texto:
+            palavra = ps.stem(palavra, 0,len(palavra)-1) if flag_stemmer else palavra
             palavra = unidecode(palavra.upper())
+
             if palavra in colecao_palavras.keys():
                 colecao_palavras[palavra].append(numero_texto)
                 continue
