@@ -23,7 +23,7 @@ flag_stemmer = False
 for linha in arquivo_config:
     if not("=" in linha):
         if linha.replace("\n","").replace(" ","") == "STEMMER": 
-            print(linha)
+    
             flag_stemmer = True
         continue
     linha = linha.split("=")[1]
@@ -35,7 +35,7 @@ for linha in arquivo_config:
 arquivo_config.close()
 
 tabela_consultas = pd.read_csv("../RESULT/" + config[1], sep=';', encoding="utf_8")
-modelo_vetorial = pd.read_csv("../RESULT/" + config[0], sep=';', encoding="utf_8")
+modelo_vetorial = pd.read_csv("../RESULT/" + config[0], sep=';', encoding="utf_8", index_col=0)
 #modelo_vetorial = modelo_vetorial.iloc[:50][:50]
 #tabela_consultas = tabela_consultas.iloc[:6][:]
 modelo_vetorial.set_index("Words", inplace = True)
@@ -56,7 +56,7 @@ dic_modulo_docs = modelo_vetorial.T.apply(lambda x: (x**2).sum(), axis=1)
 dic_modulo_docs = dic_modulo_docs.to_dict()
 
 dic_dic_vetorial = modelo_vetorial.to_dict("dict")
-print(dic_dic_vetorial.keys())
+#print(dic_dic_vetorial.keys())
 
 palavras_consulta = {}
 modulo_consulta = 0
@@ -109,9 +109,11 @@ for i in tabela_consultas.index:
         
         for chave,valor in palavras_consulta.items():
             
-            doc_x_consulta += valor*dic_dic_vetorial[chave][col]
+            doc_x_consulta += valor*dic_dic_vetorial[col][chave]
     
-
+        
+        if dic_modulo_docs[col] == 0:
+            continue
         distancia =  doc_x_consulta/(modulo_consulta * dic_modulo_docs[col])
         distancias_documentos.append([col , distancia]) 
    
