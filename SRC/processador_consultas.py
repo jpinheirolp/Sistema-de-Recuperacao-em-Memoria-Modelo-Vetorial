@@ -18,6 +18,9 @@ print(config)
 arquivo_leitura = open('../CysticFibrosis2-20220501/data/' + config[0],'r')
 
 conteudo_leitura = arquivo_leitura.read()
+
+arquivo_leitura.close()
+
 soup = BeautifulSoup(conteudo_leitura,'xml')
 numeros_consultas = soup.find_all('QueryNumber')
 textos_consultas = soup.find_all('QueryText')
