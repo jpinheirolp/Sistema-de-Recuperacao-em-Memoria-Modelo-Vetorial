@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from unidecode import unidecode
 import math
 import matplotlib.pyplot as plt
+import pandas as pd
 
 arquivo_config = open('CR.CFG', 'r')
 config = []
@@ -59,9 +60,21 @@ for linha in arquivo_resultados:
 
 arquivo_resultados.close()
 
+medida_f = 0
+r_precisao = []
+tabela_precisoes = pd.DataFrame(0.0, index=range(1,101) ,columns=["precisao@5","precisao@10"])
+media_precisao = 0
+media_media_precisao = 0
+dcg = [0]*10
+media_dcg = [0]*10
+rr = 0
+media_rr = 0
+
 onze_recall_total = [0]*11
 onze_recall_consulta = [0]*11
 for chave,valor in  dic_resultados.items():
+    media_precisao = 0
+
     dic_consulta = dic_esperados[chave]
     num_recuperados = 0.0
     num_recuperados_relevantes = 0.0
@@ -75,6 +88,35 @@ for chave,valor in  dic_resultados.items():
         recall = int(recall)
         onze_recall_consulta[recall] = max(onze_recall_consulta[recall],precisao)
 
+        if num_recuperados == 5:
+            chave = int(chave)
+            tabela_precisoes.loc[chave]['precisao@5'] = precisao/100
+
+        if num_recuperados == 10:
+            chave = int(chave)
+            tabela_precisoes.loc[chave]['precisao@10'] = precisao/100
+        
+        if num_recuperados == num_relevantes:
+            r_precisao.append(num_recuperados_relevantes/num_relevantes)
+
+        if num_recuperados <= num_relevantes:
+            media_precisao += (num_recuperados_relevantes/num_recuperados)/num_relevantes
+
+        if num_recuperados_relevantes == 1:
+            rr = 1/num_recuperados
+
+        if int(num_recuperados) <= 10:
+            if int(num_recuperados) == 1: 
+                dcg[int(num_recuperados)-1] = (2**num_recuperados_relevantes - 1)/(math.log(1+num_recuperados))
+                continue
+            dcg[int(num_recuperados-1)] = dcg[int(num_recuperados-2)] + (2**num_recuperados_relevantes - 1)/(math.log(1+num_recuperados))
+    
+    media_media_precisao += media_precisao/100
+    media_rr += rr/100
+    for i in range(len(dcg)):
+        media_dcg[i] += dcg[i]/100
+    
+
     for i in range(len(onze_recall_total)):
         onze_recall_total[i] = max(onze_recall_consulta[i],onze_recall_total[i])
 
@@ -87,25 +129,44 @@ for i in range(len(onze_recall_total)):
 print(onze_recall_total)
 print(lista_x)
 
-  
+#tabela_precisoes.to_csv("../AVALIA/" + config[3], sep=';', encoding='utf-8')
+
+tabela_map_mrr = pd.DataFrame(data=[[media_media_precisao,media_rr]], index=["valores"] ,columns=["map","mrr"])
  
-plt.plot( lista_x, onze_recall_total, color='blue', linestyle='solid', linewidth = 3,
-         marker='o', markerfacecolor='black', markersize=6)
+#tabela_map_mrr.to_csv("../AVALIA/" + config[5], sep=';', encoding='utf-8')
+
+#plt.plot( lista_x, onze_recall_total, color='blue', linestyle='solid', linewidth = 3, marker='o', markerfacecolor='black', markersize=6)
   
 
-plt.ylim(0,60)
-plt.xlim(0,100)
+#plt.ylim(0,100)
+#plt.xlim(0,100)
   
 
-plt.xlabel('recall')
+#plt.xlabel('recall')
 
-plt.ylabel('precisão')
+#plt.ylabel('precisão')
   
-# giving a title to my graph
-plt.title('gráfico 11 pontos precisão recall')
+#plt.title('gráfico 11 pontos precisão recall')
+
+#plt.savefig("../AVALIA/" + config[2])
+
+
+#plt.hist(r_precisao)
+
+#plt.savefig("../AVALIA/" + config[4])
+
+
+plt.plot( [1,2,3,4,5,6,7,8,9,10], media_dcg, color='purple', linestyle='solid', linewidth = 3, marker='o', markerfacecolor='black', markersize=6)
   
-# function to show the plot
-plt.savefig("../AVALIA/onze_pontos_pxr.png")
 
+plt.ylim(0,1)
+plt.xlim(1,10)
+  
 
+plt.xlabel('ranking n')
 
+plt.ylabel('dcg')
+  
+plt.title('gráfico media dcg')
+
+plt.savefig("../AVALIA/" + config[6])
